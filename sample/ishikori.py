@@ -11,11 +11,11 @@ ubb = BuzzerSensorManager()
 cam = CameraSensorManager()
 imu = ImageUploadManager()
 
-timeout = time.time() + 20
+timeout = time.time() + 30
 while True:
     if time.time() > timeout:
         break
     elif(proximitySensor.object_in_front()):
         ubb.start_alarm(1)
-        cam.take_picture()
+        #cam.take_picture()
         #print(imu.uploadImage()['link'])

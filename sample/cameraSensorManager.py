@@ -10,10 +10,10 @@ class CameraSensorManager():
     def __init__(self):
         self.configuration = ConfigurationWrapper()
         self.pathToLatestCapture = self.configuration.imgur_latest_photo_root_path()
-        self.camera = PiCamera()
             
     def take_picture(self):
         try:
+            self.camera = PiCamera()
             self.camera.start_preview()
             sleep(3)
             self.camera.capture(self.pathToLatestCapture, use_video_port=True)
