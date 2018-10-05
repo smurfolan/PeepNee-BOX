@@ -5,17 +5,19 @@ from buzzerSensorManager import BuzzerSensorManager
 from proximitySensorManager import ProximitySensorManager
 from cameraSensorManager import CameraSensorManager
 from imageUploadManager import ImageUploadManager
+from hmiDisplayManager import HmiDisplayManager
 
 proximitySensor = ProximitySensorManager()
 ubb = BuzzerSensorManager()
 cam = CameraSensorManager()
 imu = ImageUploadManager()
+hmi = HmiDisplayManager()
 
 timeout = time.time() + 30
 while True:
     if time.time() > timeout:
         break
     elif(proximitySensor.object_in_front()):
-        ubb.start_alarm(1)
+        #ubb.start_alarm(1)
         #cam.take_picture()
         #print(imu.uploadImage()['link'])
