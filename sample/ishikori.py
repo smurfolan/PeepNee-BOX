@@ -13,11 +13,17 @@ cam = CameraSensorManager()
 imu = ImageUploadManager()
 hmi = HmiDisplayManager()
 
-timeout = time.time() + 30
+timeout = time.time() + 20
 while True:
     if time.time() > timeout:
+        print('timeout')
+        hmi.sleep()
         break
     elif(proximitySensor.object_in_front()):
         #ubb.start_alarm(1)
+        hmi.idle()
+        #print('after the idle')
         #cam.take_picture()
         #print(imu.uploadImage()['link'])
+    print('Loop')
+    time.sleep(2)
