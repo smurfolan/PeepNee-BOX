@@ -6,6 +6,7 @@ from proximitySensorManager import ProximitySensorManager
 from cameraSensorManager import CameraSensorManager
 from imageUploadManager import ImageUploadManager
 from hmiDisplayManager import HmiDisplayManager
+from enums import HmiDisplayPageEnum
 
 proximitySensor = ProximitySensorManager()
 ubb = BuzzerSensorManager()
@@ -13,7 +14,7 @@ cam = CameraSensorManager()
 imu = ImageUploadManager()
 hmi = HmiDisplayManager()
 
-timeout = time.time() + 20
+timeout = time.time() + 25
 while True:
     if time.time() > timeout:
         print('timeout')
