@@ -2,13 +2,13 @@ from picamera import PiCamera
 from time import sleep
 
 from patternImplementations import Singleton
-from configurationWrapping import ConfigurationWrapper
+from configurationWrapping import GlobalConfigurationWrapper
 
 class CameraSensorManager():
     __metaclass__ = Singleton
     
     def __init__(self):
-        self.configuration = ConfigurationWrapper()
+        self.configuration = GlobalConfigurationWrapper()
         self.pathToLatestCapture = self.configuration.imgur_latest_photo_root_path()
             
     def take_picture(self):
