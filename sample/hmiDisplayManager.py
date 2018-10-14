@@ -67,8 +67,3 @@ class HmiDisplayManager():
         
         if self.serial.isOpen():
             self.serial.close()
-            
-    
-    
-            
-        
