@@ -2,6 +2,11 @@ import configparser
 
 class GlobalConfigurationWrapper:
     default_path = '/home/pi/Desktop/PeepNee/config.ini'
+    _SIGNALR_SECTION_ = 'signalR'
+    _LOGGING_SECTION_ = 'logging'
+    _ERROR_NOTIFICATIONS_SECTION_ = 'errornotifications'
+    _IMGUR_SECTION_ = 'imgur'
+    _BOX_METADATA_SECTION_ = 'boxMetadata'
     
     def __init__(self, path_to_file=None):
         if path_to_file is None:
@@ -11,38 +16,35 @@ class GlobalConfigurationWrapper:
         self.config.read(path_to_file)        
 
     def box_id(self):
-        return self.config['boxMetadata']['id']
+        return self.config[_BOX_METADATA_SECTION_]['id']
     
     # SignalR
     def signalr_hub_name(self):
-        return self.config['signalR']['hubname']
+        return self.config[_SIGNALR_SECTION_ ]['hubname']
 
     def signalr_hub_hosturl(self):
-        return self.config['signalR']['hubhosturl']
+        return self.config[_SIGNALR_SECTION_ ]['hubhosturl']
 
     # Logging
     def logging_log_to(self):
-        return self.config['logging']['logto']
-
+        return self.config[_LOGGING_SECTION_]['logto']
     def logging_log_level(self):
-        return self.config['logging']['loglevel']
+        return self.config[_LOGGING_SECTION_]['loglevel']
 
     # Error notifications
     def error_notifications_send_email_on_error(self):
-        return self.config['errornotifications']['sendemailonerror']
-
+        return self.config[_ERROR_NOTIFICATIONS_SECTION_]['sendemailonerror']
     def error_notifications_support_email(self):
-        return self.config['errornotifications']['supportemail']
+        return self.config[_ERROR_NOTIFICATIONS_SECTION_]['supportemail']
 
     # Imgur
     def imgur_client_id(self):
-        return self.config['imgur']['clientid']
+        return self.config[_IMGUR_SECTION_]['clientid']
 
     def imgur_client_secret(self):
-        return self.config['imgur']['clientsecret']
-
+        return self.config[_IMGUR_SECTION_]['clientsecret']
     def imgur_latest_photo_root_path(self):
-        return self.config['imgur']['lastestphotorootpath']
+        return self.config[_IMGUR_SECTION_]['lastestphotorootpath']
 
 class HmiConfigurationWrapper:
     default_path = '/home/pi/Desktop/PeepNee/hmiConfig.ini'
