@@ -1,11 +1,11 @@
 from imgurpython import ImgurClient
 
-from configurationWrapping import ConfigurationWrapper
+from configurationWrapping import GlobalConfigurationWrapper
 
 class ImageUploadManager():
 
     def __init__(self):
-        self.configuration = ConfigurationWrapper()
+        self.configuration = GlobalConfigurationWrapper()
         self.clientId = self.configuration.imgur_client_id()
         self.clientSecret = self.configuration.imgur_client_secret()
         self.imagePath = self.configuration.imgur_latest_photo_root_path()

@@ -5,7 +5,7 @@ import struct
 import threading
 
 from patternImplementations import Singleton
-from configurationWrapping import ConfigurationWrapper
+from configurationWrapping import GlobalConfigurationWrapper
 from enums import HmiDisplayPageEnum
 
 class HmiDisplayManager():
@@ -13,22 +13,19 @@ class HmiDisplayManager():
     
     _DAT_FMT_ = 'x6B'
     _HMI_COMMAND_ENDING_ = '\xff\xff\xff'
+    _NUMBER_OF_BYTES_TO_READ_ = 7
+    _EXPECTED_MIN_SIZE_OF_RECEIVED_PAYLOAD_ = 24
     
     def __init__(self):
-        self.configuration = ConfigurationWrapper()
-        
+        self.configuration = GlobalConfigurationWrapper()      
         self.serial = serial.Serial(port='/dev/serial0',baudrate=9600,timeout=1.0)
-        
-        print('Creating new thread')
         self.worker_thread = threading.Thread(target=self.__idle_start, args=())
         
     def idle(self):
         if not self.serial.isOpen():
-            print('Open serial port')
             self.serial.open()
               
         if not self.worker_thread.isAlive():
-            print('Start worker thread')
             self.worker_thread.start()
         
     def sleep(self):
@@ -56,8 +53,8 @@ class HmiDisplayManager():
     
     def __idle_start(self):   
         while getattr(self.worker_thread, "do_run", True):
-            rcv=self.serial.readline(7)
-            if(sys.getsizeof(rcv)>=24):
+            rcv=self.serial.readline(_NUMBER_OF_BYTES_TO_READ_)
+            if(sys.getsizeof(rcv)>=_EXPECTED_MIN_SIZE_OF_RECEIVED_PAYLOAD_):
                 pageId, btnId, _, _, _, _ = struct.unpack(self._DAT_FMT_, rcv)
                 # TODO: Add discrete mechanism for going through the pages
                 if(pageId == 1):
@@ -70,8 +67,3 @@ class HmiDisplayManager():
         
         if self.serial.isOpen():
             self.serial.close()
-            
-    
-    
-            
-        

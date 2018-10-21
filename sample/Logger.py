@@ -1,4 +1,4 @@
-from configurationWrapping import ConfigurationWrapper
+from configurationWrapping import GlobalConfigurationWrapper
 from patternImplementations import Singleton
 from enums import ErrorLevelEnum, LogToEnum
 
@@ -6,7 +6,7 @@ class Logger():
     __metaclass__ = Singleton
     
     def __init__(self):
-        self.configuration = ConfigurationWrapper()
+        self.configuration = GlobalConfigurationWrapper()
         self.logLevel = ErrorLevelEnum[self.configuration.logging_log_level()]
         self.logTo = LogToEnum[self.configuration.logging_log_to()]
 
