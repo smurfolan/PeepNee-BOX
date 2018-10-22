@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import serial
 
 from buzzerSensorManager import BuzzerSensorManager
 from proximitySensorManager import ProximitySensorManager
@@ -28,3 +29,4 @@ while True:
         #print(imu.uploadImage()['link'])
     print('Loop')
     time.sleep(2)
+

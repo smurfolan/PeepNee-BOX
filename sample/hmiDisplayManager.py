@@ -5,7 +5,7 @@ import struct
 import threading
 
 from patternImplementations import Singleton
-from configurationWrapping import GlobalConfigurationWrapper
+from configurationWrapping import GlobalConfigurationWrapper, HmiConfigurationWrapper
 from enums import HmiDisplayPageEnum
 
 class HmiDisplayManager():
@@ -17,7 +17,8 @@ class HmiDisplayManager():
     _EXPECTED_MIN_SIZE_OF_RECEIVED_PAYLOAD_ = 24
     
     def __init__(self):
-        self.configuration = GlobalConfigurationWrapper()      
+        self.configuration = GlobalConfigurationWrapper()
+        self.hmiConfiguration = HmiConfigurationWrapper()
         self.serial = serial.Serial(port='/dev/serial0',baudrate=9600,timeout=1.0)
         self.worker_thread = threading.Thread(target=self.__idle_start, args=())
         
@@ -35,13 +36,13 @@ class HmiDisplayManager():
     def show_page(self, pageId):
         switcher = {
             #TODO: Optimize what is in the argument list of __send_commande
-            HmiDisplayPageEnum.Home: lambda: self.__send_command(b'page page0\xff\xff\xff'),
-            HmiDisplayPageEnum.GoOnMarkerAndPushAgain: lambda: self.__send_command(b'page page1\xff\xff\xff'),
-            HmiDisplayPageEnum.TakingPictureOfYou: lambda: self.__send_command(b'page page2\xff\xff\xff'),
-            HmiDisplayPageEnum.WaitingForAnswer: lambda: self.__send_command(b'page page3\xff\xff\xff'),
-            HmiDisplayPageEnum.PackageDeclined: lambda: self.__send_command(b'page page4\xff\xff\xff'),
-            HmiDisplayPageEnum.PackageAccepted: lambda: self.__send_command(b'page page5\xff\xff\xff'),
-            HmiDisplayPageEnum.RepeatTheSteps: lambda: self.__send_command(b'page page6\xff\xff\xff')
+            HmiDisplayPageEnum.Home: lambda: self.__send_command(b'page 0\xff\xff\xff'),
+            HmiDisplayPageEnum.GoOnMarkerAndPushAgain: lambda: self.__send_command(b'page 1\xff\xff\xff'),
+            HmiDisplayPageEnum.TakingPictureOfYou: lambda: self.__send_command(b'page 2\xff\xff\xff'),
+            HmiDisplayPageEnum.WaitingForAnswer: lambda: self.__send_command(b'page 3\xff\xff\xff'),
+            HmiDisplayPageEnum.PackageDeclined: lambda: self.__send_command(b'page 4\xff\xff\xff'),
+            HmiDisplayPageEnum.PackageAccepted: lambda: self.__send_command(b'page 5\xff\xff\xff'),
+            HmiDisplayPageEnum.RepeatTheSteps: lambda: self.__send_command(b'page 6\xff\xff\xff')
         }
         f = switcher.get(pageId, lambda: "Invalid page id")
         f()
@@ -53,16 +54,15 @@ class HmiDisplayManager():
     
     def __idle_start(self):   
         while getattr(self.worker_thread, "do_run", True):
-            rcv=self.serial.readline(_NUMBER_OF_BYTES_TO_READ_)
-            if(sys.getsizeof(rcv)>=_EXPECTED_MIN_SIZE_OF_RECEIVED_PAYLOAD_):
+            rcv=self.serial.readline(self._NUMBER_OF_BYTES_TO_READ_)
+            if(sys.getsizeof(rcv)>=self._EXPECTED_MIN_SIZE_OF_RECEIVED_PAYLOAD_):
                 pageId, btnId, _, _, _, _ = struct.unpack(self._DAT_FMT_, rcv)
-                # TODO: Add discrete mechanism for going through the pages
-                if(pageId == 1):
-                    if(btnId == 1):
-                        self.show_page(HmiDisplayPageEnum.TakingPictureOfYou)
 
-                print('Button with id:' + str(btnId) + 'on page:' + str(pageId))
-                #TODO: Based on buttonId and pageId -> Call the corresponding method.
+                # TODO: Add discrete mechanism for going through the pages
+                if(pageId == self.hmiConfiguration.show_package_page_id()):
+                    if(btnId == self.hmiConfiguration.show_packge_and_click_button_index()):
+                        self.show_page(HmiDisplayPageEnum.TakingPictureOfYou)
+                        
             time.sleep(2)
         
         if self.serial.isOpen():
