@@ -35,14 +35,20 @@ class HmiDisplayManager():
     
     def show_page(self, pageId):
         switcher = {
-            #TODO: Optimize what is in the argument list of __send_commande
-            HmiDisplayPageEnum.Home: lambda: self.__send_command(b'page 0\xff\xff\xff'),
-            HmiDisplayPageEnum.GoOnMarkerAndPushAgain: lambda: self.__send_command(b'page 1\xff\xff\xff'),
-            HmiDisplayPageEnum.TakingPictureOfYou: lambda: self.__send_command(b'page 2\xff\xff\xff'),
-            HmiDisplayPageEnum.WaitingForAnswer: lambda: self.__send_command(b'page 3\xff\xff\xff'),
-            HmiDisplayPageEnum.PackageDeclined: lambda: self.__send_command(b'page 4\xff\xff\xff'),
-            HmiDisplayPageEnum.PackageAccepted: lambda: self.__send_command(b'page 5\xff\xff\xff'),
-            HmiDisplayPageEnum.RepeatTheSteps: lambda: self.__send_command(b'page 6\xff\xff\xff')
+            HmiDisplayPageEnum.Home:
+                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.home_page_id())),
+            HmiDisplayPageEnum.GoOnMarkerAndPushAgain:
+                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.show_package_page_id())),
+            HmiDisplayPageEnum.TakingPictureOfYou:
+                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.taking_picture_page_id())),
+            HmiDisplayPageEnum.WaitingForAnswer:
+                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.wait_page_id())),
+            HmiDisplayPageEnum.PackageDeclined:
+                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.packageDeclinedPageId())),
+            HmiDisplayPageEnum.PackageAccepted:
+                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.package_accepted_page_id())),
+            HmiDisplayPageEnum.RepeatTheSteps:
+                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.repeat_steps_page_id()))
         }
         f = switcher.get(pageId, lambda: "Invalid page id")
         f()
@@ -51,6 +57,11 @@ class HmiDisplayManager():
     def __send_command(self, command):
         self.serial.write(command)
         
+    def __formatted_page_command(self, pageId):
+        # This the representation of 'page 0\xff\xff\xff'. What we do here is to dynamically assign the page id.
+        commandAsBytesArray = [0x70,0x61,0x67,0x65,0x20,0x30,0xff, 0xff, 0xff]
+        commandAsBytesArray[5] = ord(str(pageId))
+        return bytes(commandAsBytesArray)
     
     def __idle_start(self):   
         while getattr(self.worker_thread, "do_run", True):
