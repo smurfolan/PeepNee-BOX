@@ -7,6 +7,7 @@ class GlobalConfigurationWrapper:
     _ERROR_NOTIFICATIONS_SECTION_ = 'errornotifications'
     _IMGUR_SECTION_ = 'imgur'
     _BOX_METADATA_SECTION_ = 'boxMetadata'
+    _REAL_TIME_PUSH_NOTIFICATIONS_SECTION_ = 'realTimePushNotifications'
     
     def __init__(self, path_to_file=None):
         if path_to_file is None:
@@ -45,6 +46,10 @@ class GlobalConfigurationWrapper:
         return self.config[self._IMGUR_SECTION_]['clientsecret']
     def imgur_latest_photo_root_path(self):
         return self.config[self._IMGUR_SECTION_]['lastestphotorootpath']
+    
+    # Real Time Push Notifications
+    def rtpn_timebox_response_after_push_notification(self):
+        return self.config[self._REAL_TIME_PUSH_NOTIFICATIONS_SECTION_]['timeboxResponseAfterPushNotification']
 
 class HmiConfigurationWrapper:
     default_path = '/home/pi/Desktop/PeepNee/hmiConfig.ini'
@@ -59,38 +64,24 @@ class HmiConfigurationWrapper:
         self.config.read(path_to_file)
         
     # pages
-    def home_page_name(self):
-        return self.config[self._PAGES_SECTION_]['homePageName']
     def home_page_id(self):
         return (int)(self.config[self._PAGES_SECTION_]['homePageId'])
     
-    def show_package_page_name(self):
-        return self.config[self._PAGES_SECTION_]['showPackagePageName']
     def show_package_page_id(self):
         return (int)(self.config[self._PAGES_SECTION_]['showPackagePageId'])
     
-    def taking_picture_page_name(self):
-        return self.config[self._PAGES_SECTION_]['takingPicturePageName']
     def taking_picture_page_id(self):
         return (int)(self.config[self._PAGES_SECTION_]['takingPicturePageId'])
     
-    def wait_page_name(self):
-        return self.config[self._PAGES_SECTION_]['waitPageName']
     def wait_page_id(self):
         return (int)(self.config[self._PAGES_SECTION_]['waitPageId'])
     
-    def package_accepted_page_name(self):
-        return self.config[self._PAGES_SECTION_]['packageAcceptedPageName']
     def package_accepted_page_id(self):
         return (int)(self.config[self._PAGES_SECTION_]['packageAcceptedPageId'])
     
-    def package_declined_page_name(self):
-        return self.config[self._PAGES_SECTION_]['packageDeclinedPageName']
     def packageDeclinedPageId(self):
         return (int)(self.config[self._PAGES_SECTION_]['packageDeclinedPageId'])
     
-    def repeat_steps_page_name(self):
-        return self.config[self._PAGES_SECTION_]['repeatStepsPageName']
     def repeat_steps_page_id(self):
         return (int)(self.config[self._PAGES_SECTION_]['repeatStepsPageId'])
     
