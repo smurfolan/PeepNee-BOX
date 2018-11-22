@@ -8,6 +8,7 @@ class GlobalConfigurationWrapper:
     _IMGUR_SECTION_ = 'imgur'
     _BOX_METADATA_SECTION_ = 'boxMetadata'
     _REAL_TIME_PUSH_NOTIFICATIONS_SECTION_ = 'realTimePushNotifications'
+    _FIREBASE_SECTION_ = 'firebase'
     
     def __init__(self, path_to_file=None):
         if path_to_file is None:
@@ -15,9 +16,13 @@ class GlobalConfigurationWrapper:
 
         self.config = configparser.ConfigParser()
         self.config.read(path_to_file)        
-
+    # Box metadata
     def box_id(self):
         return self.config[self._BOX_METADATA_SECTION_]['id']
+    def box_open_by_default(self):
+        return self.config[self._BOX_METADATA_SECTION_]['openByDefault']
+    def box_time_to_wait_before_open_or_close(self):
+        return self.config[self._BOX_METADATA_SECTION_]['timeToWaitBeforeOpenOrClose']
     
     # SignalR
     def signalr_hub_name(self):
@@ -50,6 +55,16 @@ class GlobalConfigurationWrapper:
     # Real Time Push Notifications
     def rtpn_timebox_response_after_push_notification(self):
         return self.config[self._REAL_TIME_PUSH_NOTIFICATIONS_SECTION_]['timeboxResponseAfterPushNotification']
+    
+    # Firebase
+    def fbase_apiKey(self):
+        return self.config[self._FIREBASE_SECTION_]['apiKey']   
+    def fbase_authDomain(self):
+        return self.config[self._FIREBASE_SECTION_]['authDomain']
+    def fbase_databaseUrl(self):
+        return self.config[self._FIREBASE_SECTION_]['databaseURL']
+    def fbase_storageBucket(self):
+        return self.config[self._FIREBASE_SECTION_]['storageBucket']
 
 class HmiConfigurationWrapper:
     default_path = '/home/pi/Desktop/PeepNee/hmiConfig.ini'
