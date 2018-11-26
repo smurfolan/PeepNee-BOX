@@ -30,15 +30,16 @@ def stream_handler(message):
     print(message["path"]) # /-K7yGTTEp7O549EzTYtI
     print(message["data"]) # {'title': 'Pyrebase', "body": "etc..."}
 
-timeout = time.time() + 25
+#timeout = time.time() + 25
 db = firebase.database()
 
-data = {"mailboxId": 112233, "ocrText":"Frankfurt", "snapshotUrl":"www.zaslujavam.com/a/b/v.jpg"}
-rpushRsult = db.child("MailItems").push(data)
-print(rpushRsult)
+#data = {"mailboxId": 112233, "ocrText":"Frankfurt", "snapshotUrl":"www.zaslujavam.com/a/b/v.jpg"}
+#rpushRsult = db.child("MailItems").push(data)
+#print(rpushRsult)
 
-my_stream = db.child("MailItems/-LRsYSAI0XlF9XijXD7H").stream(stream_handler)
+my_stream = db.child("MailItems/-LSACc1GVlKHZ5vBZfWK").stream(stream_handler)
 time.sleep(30)
+my_stream.close()
 #while True:
     
     #if time.time() > timeout:
