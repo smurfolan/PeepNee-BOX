@@ -96,7 +96,7 @@ class FirebaseManager():
         self.boxId = self.configuration.box_id()
         self.openByDefault = self.configuration.box_open_by_default()
         self.timeToWaitBeforeOpenOrClose = self.configuration.box_time_to_wait_before_open_or_close()
-        
-#fbm = FirebaseManager()
-#fbm.printMe()
-#fbm.submit_mail_item("ocre value", "https://i.pinimg.com/236x/29/01/3f/29013f4c4884c0907b9f5694b5bf402b--angry-meme-british.jpg")
+
+# Usage example
+# fbm = FirebaseManager()
+# fbm.submit_mail_item("ocre value", "https://i.pinimg.com/236x/29/01/3f/29013f4c4884c0907b9f5694b5bf402b--angry-meme-british.jpg")

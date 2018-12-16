@@ -34,3 +34,7 @@ class BuzzerSensorManager():
     def __destroy(self):
             GPIO.output(self.__OUTPUT_GPIO_PIN_NUMBER, GPIO.HIGH)
             GPIO.cleanup(self.__OUTPUT_GPIO_PIN_NUMBER)
+            
+# Usage example:
+# buzzer = BuzzerSensorManager()
+# buzzer.start_alarm(2)

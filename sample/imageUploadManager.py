@@ -18,3 +18,9 @@ class ImageUploadManager():
             return uploaded_image
         except BaseException as e:
             print('Error' + str(e))
+            
+# Usage example
+# ium = ImageUploadManager()
+# print('About to upload a picture...')
+# urlToUploadedImage = ium.uploadImage()
+# print('Picture was uploaded. Its public URL is: ' + str(urlToUploadedImage['link']))

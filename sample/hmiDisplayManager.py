@@ -78,3 +78,11 @@ class HmiDisplayManager():
         
         if self.serial.isOpen():
             self.serial.close()
+
+# Usage example
+# hmi = HmiDisplayManager()
+# hmi.idle()
+# print('Hmi display is now in idle state.')
+# time.sleep(20)
+# hmi.sleep()
+# print('Hmi display is now in sleep state.')

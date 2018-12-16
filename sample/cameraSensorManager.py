@@ -20,3 +20,9 @@ class CameraSensorManager():
             self.camera.stop_preview()
         finally:
             self.camera.close()
+            
+# Usage example:
+# camera = CameraSensorManager()
+# print('About to take a picture...')
+# camera.take_picture()
+# print('Picture was taken!')

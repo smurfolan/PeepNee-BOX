@@ -31,8 +31,9 @@ class ServoManager():
         
         GPIO.output(self.__OUTPUT_GPIO_PIN_NUMBER, False)
         self.pwm.ChangeDutyCycle(0)
-        
-#sm=ServoManager()
-#sm.openMailbox()
-#sleep(30)
-#sm.closeMailbox()
+
+# Usage example
+# sm=ServoManager()
+# sm.openMailbox()
+# sleep(30)
+# sm.closeMailbox()
