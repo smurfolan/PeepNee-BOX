@@ -42,7 +42,12 @@ class FirebaseManager():
                 print('New item successfully created and stream was created')
                 self.new_mail_item_update_stream = self.db.child("MailItems/" + self.referenceToNewlyAddedMailItem).stream(self.__new_mail_item_update_stream_handler)
                
-            self.__start_waiting_for_user_response()
+            newMailItemStatus = self.__start_waiting_for_user_response()
+            
+            return {
+                    "mailItemStatus": newMailItemStatus,
+                    "openByDefault": self.openByDefault
+                    }
         except BaseException as e:
             print('Error' + str(e))
       
@@ -60,28 +65,16 @@ class FirebaseManager():
 
         if self.NewlyAddedMailItemStatus == MailItemStatus.Pending:
             if self.openByDefault:
-                print("OPEN BOX") #TODO: Use some opening manager and open the box. Then using hmiDisplayManager show 'Accepted' screen.
                 self.db.child("MailItems").child(self.referenceToNewlyAddedMailItem).update({ "status": MailItemStatus.Accepted })
             else:
-                print("DO NOTHING. KEEP BOX CLOSED") #TODO: Then using hmiDisplayManager show 'Declined' screen.
                 self.db.child("MailItems").child(self.referenceToNewlyAddedMailItem).update({ "status": MailItemStatus.Declined })     
-        
-        # MailItemStatus.Accepted -> Open the box and update the status on FB. Then using hmiDisplayManager show 'Accepted' screen.
-        if self.NewlyAddedMailItemStatus == MailItemStatus.Accepted:
-            print("OPEN BOX") #TODO: Use some opening manager and open the box. Then using hmiDisplayManager show 'Accepted' screen.
-        
-        # MailItemStatus.Declined -> Keep the box closed and update the status on FB. Then using hmiDisplayManager show 'Declined' screen.
-        if self.NewlyAddedMailItemStatus == MailItemStatus.Declined:
-            print("DO NOTHING. KEEP BOX CLOSED")
-        
-        # MailItemStatus.Repeat -> Keep the box closed and update the status on FB. Then using hmiDisplayManager show 'Repeat' screen.
-        if self.NewlyAddedMailItemStatus == MailItemStatus.Repeat:
-            print("REPEAT STEPS") #TODO: Need to change screen from hmiDisplayManager
         
         if self.new_mail_item_update_stream is not None:
             print('Closing update stream..')
             self.new_mail_item_update_stream.close()
-    
+            
+        return self.NewlyAddedMailItemStatus
+            
     def __load_default_settings_from_firebase(self):
         try:
             mailbox = self.db.child("Mailboxes/" + self.boxId).get()

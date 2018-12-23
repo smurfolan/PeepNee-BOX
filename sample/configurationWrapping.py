@@ -23,6 +23,8 @@ class GlobalConfigurationWrapper:
         return self.config[self._BOX_METADATA_SECTION_]['openByDefault']
     def box_time_to_wait_before_open_or_close(self):
         return self.config[self._BOX_METADATA_SECTION_]['timeToWaitBeforeOpenOrClose']
+    def box_time_to_keep_the_box_open(self):
+        return self.config[self._BOX_METADATA_SECTION_]['timeToKeepTheBoxOpen']
     
     # SignalR
     def signalr_hub_name(self):
