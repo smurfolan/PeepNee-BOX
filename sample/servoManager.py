@@ -35,5 +35,5 @@ class ServoManager():
 # Usage example
 # sm=ServoManager()
 # sm.openMailbox()
-# sleep(30)
+# sleep(10)
 # sm.closeMailbox()

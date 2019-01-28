@@ -24,6 +24,6 @@ class ProximitySensorManager():
 #         break
 #     elif psm.object_in_front():
 #         print('OBJECT WAS DETECTED')
-# time.sleep(1)
-   
+#     time.sleep(1)
+
 # print('Proximity sensor detection finished.')
