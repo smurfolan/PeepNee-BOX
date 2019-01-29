@@ -9,12 +9,13 @@ class UpsManager():
     
     __INPUT_GPIO_PIN_NUMBER = 11
     __CHECK_FREQUENCY = 5
-    __MINIMAL_LOW_BAT_DET_TIMEGAP_ALLOWED = 5
+    __MINIMAL_LOW_BAT_DET_TIMEGAP_ALLOWED = 5.5
     __LOG_FILE_NAME = "lowBatteryLog.txt"
     
     def __init__(self):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.__INPUT_GPIO_PIN_NUMBER, GPIO.IN)
+        self._lastTimeLowBatteryDetected = None
        
     def periodicallyCheckBatteryLevel(self):
         while True:
@@ -36,7 +37,9 @@ class UpsManager():
     def __start_shutdown_procedure(self):
         # call a firebase endpoint to notify the user somehow
         # subprocess.call(["sudo","shutdown","-h","now"])
-        pass
+        f = open(self.__LOG_FILE_NAME, "a")
+        f.write("The mailbox is going to shut down now!\n")
+        f.close()
     
     def __log_low_battery_entry(self):
         f = open(self.__LOG_FILE_NAME, "a")
