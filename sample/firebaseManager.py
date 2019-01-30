@@ -2,9 +2,13 @@ from pyrebase import pyrebase
 from configurationWrapping import GlobalConfigurationWrapper
 import threading
 import time
+import datetime
+import email.utils
 from enums import MailItemStatus
 
 class FirebaseManager():
+    # Additional seconds are added because of the network latency.
+    __NETWORK_LATENCY_COMPROMISE_SECONDS = 4
 
     def __init__(self):
         self.configuration = GlobalConfigurationWrapper()
@@ -24,11 +28,15 @@ class FirebaseManager():
         
     def submit_mail_item(self, ocrText, snapshotUrl):
         try:
+            mailReceivedAt = datetime.datetime.now(datetime.timezone.utc)
+            waitForUserResponseUntil = email.utils.format_datetime(mailReceivedAt + datetime.timedelta(seconds=int(self.timeToWaitBeforeOpenOrClose) + self.__NETWORK_LATENCY_COMPROMISE_SECONDS))
             data = {
                 "mailboxId": (int)(self.boxId),
                 "ocrText":ocrText,
                 "snapshotUrl":snapshotUrl,
-                "status": MailItemStatus.Pending
+                "status": MailItemStatus.Pending,
+                "receivedAt": email.utils.format_datetime(mailReceivedAt),
+                "waitForResponseUntil": waitForUserResponseUntil
             }
             
             try:
@@ -39,7 +47,7 @@ class FirebaseManager():
                 pass
             
             if self.referenceToNewlyAddedMailItem is not None:
-                print('New item successfully created and stream was created')
+                print('[DEBUG] New item successfully created and stream was created')
                 self.new_mail_item_update_stream = self.db.child("MailItems/" + self.referenceToNewlyAddedMailItem).stream(self.__new_mail_item_update_stream_handler)
                
             newMailItemStatus = self.__start_waiting_for_user_response()
@@ -52,14 +60,11 @@ class FirebaseManager():
             print('Error' + str(e))
       
     def __new_mail_item_update_stream_handler(self, message):
-        #print(message["event"]) # put
-        #print(message["path"]) # /-K7yGTTEp7O549EzTYtI
-        #print(message["data"]) # {'title': 'Pyrebase', "body": "etc..."}
-        if message["path"] == '/status':
-            self.NewlyAddedMailItemStatus = message["data"]
+        if message["data"] is not None and message["data"]["status"] is not None:
+            self.NewlyAddedMailItemStatus = int(message["data"]["status"])
 
     def __start_waiting_for_user_response(self):
-        t_end = time.time() + self.timeToWaitBeforeOpenOrClose
+        t_end = time.time() + self.timeToWaitBeforeOpenOrClose + self.__NETWORK_LATENCY_COMPROMISE_SECONDS
         while time.time() < t_end:
             continue
 
@@ -70,7 +75,7 @@ class FirebaseManager():
                 self.db.child("MailItems").child(self.referenceToNewlyAddedMailItem).update({ "status": MailItemStatus.Declined })     
         
         if self.new_mail_item_update_stream is not None:
-            print('Closing update stream..')
+            print('[DEBUG]: Closing update stream..')
             self.new_mail_item_update_stream.close()
             
         return self.NewlyAddedMailItemStatus
