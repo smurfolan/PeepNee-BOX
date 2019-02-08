@@ -58,7 +58,13 @@ class FirebaseManager():
                     }
         except BaseException as e:
             print('Error' + str(e))
-      
+    
+    def toggle_mailbox_active_status(self, isActive):
+        try:
+            self.db.child("Mailboxes").child(self.boxId).update({"isActive": isActive})
+        except BaseException as e:
+            print('Error' + str(e))
+            
     def __new_mail_item_update_stream_handler(self, message):
         if message["data"] is not None and message["data"]["status"] is not None:
             self.NewlyAddedMailItemStatus = int(message["data"]["status"])
@@ -97,4 +103,5 @@ class FirebaseManager():
 
 # Usage example
 # fbm = FirebaseManager()
+# fbm.toggle_mailbox_active_status(True)
 # fbm.submit_mail_item("ocre value", "https://i.pinimg.com/236x/29/01/3f/29013f4c4884c0907b9f5694b5bf402b--angry-meme-british.jpg")

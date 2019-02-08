@@ -1,8 +1,10 @@
 import RPi.GPIO as GPIO
 from time import sleep
 import datetime
+import subprocess
 
 from patternImplementations import Singleton
+from firebaseManager import FirebaseManager
 
 class UpsManager():
     __metaclass__ = Singleton
@@ -35,12 +37,15 @@ class UpsManager():
             sleep(self.__CHECK_FREQUENCY)
 
     def __start_shutdown_procedure(self):
-        # call a firebase endpoint to notify the user somehow
-        # subprocess.call(["sudo","shutdown","-h","now"])
         f = open(self.__LOG_FILE_NAME, "a")
         f.write("The mailbox is going to shut down now!\n")
         f.close()
-    
+        
+        fbManager = FirebaseManager()
+        fbManager.toggle_mailbox_active_status(False)
+        
+        subprocess.call(["sudo","shutdown","-h","now"])
+            
     def __log_low_battery_entry(self):
         f = open(self.__LOG_FILE_NAME, "a")
         f.write("[" + str(datetime.datetime.now()) + "] LOW BATTERY!\n")
