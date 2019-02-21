@@ -101,6 +101,9 @@ class HmiConfigurationWrapper:
     
     def repeat_steps_page_id(self):
         return (int)(self.config[self._PAGES_SECTION_]['repeatStepsPageId'])
+
+    def thank_you_page_id(self):
+        return (int)(self.config[self._PAGES_SECTION_]['thankYouPageId'])
     
     # Buttons
     def home_screen_main_button_index(self):
