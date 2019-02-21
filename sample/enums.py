@@ -17,6 +17,7 @@ class HmiDisplayPageEnum:
     PackageDeclined = 4
     PackageAccepted = 5
     RepeatTheSteps = 6
+    ThankYou = 7
     
 class MailItemStatus(IntEnum):
     Pending = 2
