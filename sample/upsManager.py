@@ -52,8 +52,8 @@ class UpsManager():
         f.close()
 
 # Usage example
-upsm=UpsManager()
-#sleep(2)
-upsm.periodicallyCheckBatteryLevel()
+# upsm=UpsManager()
+# sleep(2)
+# upsm.periodicallyCheckBatteryLevel()
 
 
