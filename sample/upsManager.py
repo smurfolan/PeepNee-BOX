@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 import datetime
 import subprocess
+import threading
 
 from patternImplementations import Singleton
 from firebaseManager import FirebaseManager
@@ -18,9 +19,19 @@ class UpsManager():
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.__INPUT_GPIO_PIN_NUMBER, GPIO.IN)
         self._lastTimeLowBatteryDetected = None
-       
-    def periodicallyCheckBatteryLevel(self):
-        while True:
+        
+        self.worker_thread = threading.Thread(target=self.__periodicallyCheckBatteryLevel, args=())
+     
+    def idle(self):
+        if not self.worker_thread.isAlive():
+            self.worker_thread.start()
+    
+    def sleep(self):
+        if hasattr(self, 'worker_thread'):
+            self.worker_thread.do_run = False
+     
+    def __periodicallyCheckBatteryLevel(self):
+        while getattr(self.worker_thread, "do_run", True):
             # -- Low battery was detected -- #
             if not GPIO.input(self.__INPUT_GPIO_PIN_NUMBER):
                 self.__log_low_battery_entry()
@@ -53,7 +64,10 @@ class UpsManager():
 
 # Usage example
 # upsm=UpsManager()
-# sleep(2)
-# upsm.periodicallyCheckBatteryLevel()
+# upsm.idle()
+# print('UPS manager is now in idle state.')
+# sleep(40)
+# upsm.sleep()
+# print('UPS manager is now in sleep state.')
 
 
