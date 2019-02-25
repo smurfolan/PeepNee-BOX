@@ -3,6 +3,7 @@ import time
 from hmiDisplayManager import HmiDisplayManager
 from upsManager import UpsManager
 from turnOffRequestHandler import TurnOffRequestHandler
+from firebaseManager import FirebaseManager
 
 try:
     hmiDisplayManager=HmiDisplayManager()
@@ -10,20 +11,24 @@ try:
     turnOffRequestHandler=TurnOffRequestHandler()
     
     hmiDisplayManager.idle()
-    # What happens if the battery went down and shut down was called on this manager file?
-    # Maybe we could also have a page to show 'Not working' when for some reason shut down was caused.
-    # Until the battery is down, we would still see the screen.
     upsManager.idle()
     turnOffRequestHandler.idle()
     
+    fbManager = FirebaseManager()
+    fbManager.toggle_mailbox_active_status(True)
+    
     while True:
         if turnOffRequestHandler.turnOffIsRequested():
+            # TODO: Using the hmiDisplayManager show an 'OFFLINE' screen to indicate box is in a shut-down state.
             break;
         time.sleep(1)
         
 except BaseException as e:
+    # TODO: implement some kind of error logging in a file and maybe send an email to support.
     pass
 finally:
     hmiDisplayManager.sleep()
     upsManager.sleep()
     turnOffRequestHandler.dispose()
+    
+    fbManager.toggle_mailbox_active_status(False)
