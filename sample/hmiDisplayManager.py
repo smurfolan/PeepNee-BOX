@@ -28,6 +28,8 @@ class HmiDisplayManager():
         self.worker_thread = threading.Thread(target=self.__idle_start, args=())
         
     def idle(self):
+        self.show_page(HmiDisplayPageEnum.Home)
+        
         if not self.serial.isOpen():
             self.serial.open()
               
