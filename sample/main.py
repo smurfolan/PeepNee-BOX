@@ -1,3 +1,4 @@
+import sys 
 import time
 
 from hmiDisplayManager import HmiDisplayManager
@@ -24,8 +25,9 @@ try:
         time.sleep(1)
         
 except BaseException as e:
-    # TODO: implement some kind of error logging in a file and maybe send an email to support.
-    pass
+    # This will log to the output file.
+    print(str(e))
+    sys.stdout.flush()
 finally:
     hmiDisplayManager.sleep()
     upsManager.sleep()
