@@ -11,10 +11,10 @@ class UserInputHandler():
     
     def __execute(self):
         try:
-            self.hmiDisplayManager.show_page(HmiDisplayPageEnum.TakingPictureOfYou)
-            
+            self.hmiDisplayManager.show_page(HmiDisplayPageEnum.TakingPictureOfYou) 
             camera = CameraSensorManager()
             camera.take_picture()
+            self.hmiDisplayManager.show_page(HmiDisplayPageEnum.PictureWasTaken)
             
             uploadManager = ImageUploadManager()
             uploadedImageMetadata = uploadManager.uploadImage()
