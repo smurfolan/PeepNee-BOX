@@ -105,6 +105,9 @@ class HmiConfigurationWrapper:
     def thank_you_page_id(self):
         return (int)(self.config[self._PAGES_SECTION_]['thankYouPageId'])
     
+    def picture_was_taken_page_id(self):
+        return (int)(self.config[self._PAGES_SECTION_]['pictureWasTakenPageId'])
+    
     # Buttons
     def home_screen_main_button_index(self):
         return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['homeScreenMainButton'])

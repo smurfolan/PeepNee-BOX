@@ -57,7 +57,9 @@ class HmiDisplayManager():
             HmiDisplayPageEnum.RepeatTheSteps:
                 lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.repeat_steps_page_id())),
             HmiDisplayPageEnum.ThankYou:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.thank_you_page_id()))
+                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.thank_you_page_id())),
+            HmiDisplayPageEnum.PictureWasTaken:
+                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.picture_was_taken_page_id()))
         }
         f = switcher.get(pageId, lambda: "Invalid page id")
         f()
