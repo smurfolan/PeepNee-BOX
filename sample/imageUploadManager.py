@@ -30,7 +30,7 @@ class ImageUploadManager():
                         "image":{
                             "source":{
                                 "imageUri":
-                                    "http://scp-sandbox-3.wdfiles.com/local--files/aredstone9955/circus-tent-620x398.jpg"
+                                    uri
                             }
                         }
                         ,
@@ -45,14 +45,15 @@ class ImageUploadManager():
             }
             
             authParams = {"key": self.configuration.gvapi_apiKey()}
-            response = requests.post(self.__VISION_API_ENDPOINT_URL, params=authParams, json=requestBody)
-
-            print(response.json())
+            response = requests.post(self.__VISION_API_ENDPOINT_URL, params=authParams, json=requestBody).json()['responses'][0]['labelAnnotations']
+            
+            return list(map(lambda x: x['description'], response))          
         except BaseException as e:
-            print('Error' + str(e))
+            print('Error:' + str(e))
         
 # Usage example
 # ium = ImageUploadManager()
+# ium.extractImageLabelsByPublicUri('https://ichef.bbci.co.uk/news/976/cpsprodpb/1363B/production/_89591497_juvenilesaltwater.jpg')
 # print('About to upload a picture...')
 # urlToUploadedImage = ium.uploadImage()
 # print('Picture was uploaded. Its public URL is: ' + str(urlToUploadedImage['link']))
