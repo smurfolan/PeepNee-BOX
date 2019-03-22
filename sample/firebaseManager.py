@@ -26,7 +26,7 @@ class FirebaseManager():
         self.__load_local_default_settings()
         self.__load_default_settings_from_firebase()
         
-    def submit_mail_item(self, ocrText, snapshotUrl):
+    def submit_mail_item(self, ocrText, snapshotUrl, associatedImageTags):
         try:
             mailReceivedAt = datetime.datetime.now(datetime.timezone.utc)
             waitForUserResponseUntil = email.utils.format_datetime(mailReceivedAt + datetime.timedelta(seconds=int(self.timeToWaitBeforeOpenOrClose) + self.__NETWORK_LATENCY_COMPROMISE_SECONDS))
@@ -36,7 +36,10 @@ class FirebaseManager():
                 "snapshotUrl":snapshotUrl,
                 "status": MailItemStatus.Pending,
                 "receivedAt": email.utils.format_datetime(mailReceivedAt),
-                "waitForResponseUntil": waitForUserResponseUntil
+                "waitForResponseUntil": waitForUserResponseUntil,
+                "topScoreImageTag": associatedImageTags[0],
+                "middleScoreImageTag": associatedImageTags[1],
+                "lowestScoreImageTag": associatedImageTags[2]
             }
             
             try:
