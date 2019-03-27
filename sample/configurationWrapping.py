@@ -9,6 +9,7 @@ class GlobalConfigurationWrapper:
     _BOX_METADATA_SECTION_ = 'boxMetadata'
     _REAL_TIME_PUSH_NOTIFICATIONS_SECTION_ = 'realTimePushNotifications'
     _FIREBASE_SECTION_ = 'firebase'
+    _GOOGLE_VISION_API_SECTION = 'googleVisionApi'
     
     def __init__(self, path_to_file=None):
         if path_to_file is None:
@@ -68,6 +69,10 @@ class GlobalConfigurationWrapper:
     def fbase_storageBucket(self):
         return self.config[self._FIREBASE_SECTION_]['storageBucket']
 
+    # Google Vision API
+    def gvapi_apiKey(self):
+        return self.config[self._GOOGLE_VISION_API_SECTION]['apiKey']
+    
 class HmiConfigurationWrapper:
     default_path = '/home/pi/Desktop/PeepNee/hmiConfig.ini'
     _PAGES_SECTION_ = 'pages'

@@ -26,17 +26,21 @@ class FirebaseManager():
         self.__load_local_default_settings()
         self.__load_default_settings_from_firebase()
         
-    def submit_mail_item(self, ocrText, snapshotUrl):
+    def submit_mail_item(self, ocrText, snapshotUrl, associatedImageTags):
         try:
             mailReceivedAt = datetime.datetime.now(datetime.timezone.utc)
             waitForUserResponseUntil = email.utils.format_datetime(mailReceivedAt + datetime.timedelta(seconds=int(self.timeToWaitBeforeOpenOrClose) + self.__NETWORK_LATENCY_COMPROMISE_SECONDS))
+            numberOfImageTags = len(associatedImageTags)
             data = {
                 "mailboxId": (int)(self.boxId),
                 "ocrText":ocrText,
                 "snapshotUrl":snapshotUrl,
                 "status": MailItemStatus.Pending,
                 "receivedAt": email.utils.format_datetime(mailReceivedAt),
-                "waitForResponseUntil": waitForUserResponseUntil
+                "waitForResponseUntil": waitForUserResponseUntil,
+                "topScoreImageTag": associatedImageTags[0] if numberOfImageTags > 0 else "",
+                "middleScoreImageTag": associatedImageTags[1] if numberOfImageTags > 1 else "",
+                "lowestScoreImageTag": associatedImageTags[2] if numberOfImageTags > 2 else ""
             }
             
             try:
@@ -104,4 +108,4 @@ class FirebaseManager():
 # Usage example
 # fbm = FirebaseManager()
 # fbm.toggle_mailbox_active_status(True)
-# fbm.submit_mail_item("ocre value", "https://i.pinimg.com/236x/29/01/3f/29013f4c4884c0907b9f5694b5bf402b--angry-meme-british.jpg")
+# fbm.submit_mail_item("ocre value", "https://i.pinimg.com/236x/29/01/3f/29013f4c4884c0907b9f5694b5bf402b--angry-meme-british.jpg", ["car", "vehicle", "police"])
