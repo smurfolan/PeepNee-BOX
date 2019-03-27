@@ -27,19 +27,8 @@ class ImageUploadManager():
             requestBody = {
                 "requests":[
                     {
-                        "image":{
-                            "source":{
-                                "imageUri":
-                                    uri
-                            }
-                        }
-                        ,
-                        "features":[
-                            {
-                                "type":"LABEL_DETECTION",
-                                "maxResults":3
-                            }
-                         ]
+                        "image":{"source":{"imageUri":uri}},
+                        "features":[{"type":"LABEL_DETECTION","maxResults":3}]
                     }
                 ]
             }
