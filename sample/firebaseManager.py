@@ -30,6 +30,7 @@ class FirebaseManager():
         try:
             mailReceivedAt = datetime.datetime.now(datetime.timezone.utc)
             waitForUserResponseUntil = email.utils.format_datetime(mailReceivedAt + datetime.timedelta(seconds=int(self.timeToWaitBeforeOpenOrClose) + self.__NETWORK_LATENCY_COMPROMISE_SECONDS))
+            numberOfImageTags = len(associatedImageTags)
             data = {
                 "mailboxId": (int)(self.boxId),
                 "ocrText":ocrText,
@@ -37,9 +38,9 @@ class FirebaseManager():
                 "status": MailItemStatus.Pending,
                 "receivedAt": email.utils.format_datetime(mailReceivedAt),
                 "waitForResponseUntil": waitForUserResponseUntil,
-                "topScoreImageTag": associatedImageTags[0] if len(associatedImageTags) > 0 else "",
-                "middleScoreImageTag": associatedImageTags[1] if len(associatedImageTags) > 1 else "",
-                "lowestScoreImageTag": associatedImageTags[2] if len(associatedImageTags) > 2 else ""
+                "topScoreImageTag": associatedImageTags[0] if numberOfImageTags > 0 else "",
+                "middleScoreImageTag": associatedImageTags[1] if numberOfImageTags > 1 else "",
+                "lowestScoreImageTag": associatedImageTags[2] if numberOfImageTags > 2 else ""
             }
             
             try:
