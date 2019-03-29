@@ -2,12 +2,14 @@ import requests
 from imgurpython import ImgurClient
 
 from configurationWrapping import GlobalConfigurationWrapper
+from loggingManager import Logger
 
 class ImageUploadManager():
     __VISION_API_ENDPOINT_URL = 'https://vision.googleapis.com/v1/images:annotate'
 
     def __init__(self):
         self.configuration = GlobalConfigurationWrapper()
+        self.logger = Logger()
         
         self.clientId = self.configuration.imgur_client_id()
         self.clientSecret = self.configuration.imgur_client_secret()
@@ -20,7 +22,7 @@ class ImageUploadManager():
             
             return uploaded_image
         except BaseException as e:
-            print('Error' + str(e))
+            self.logger.log_critical('<ImageUploadManager.uploadImage> => ' + str(e))
 
     def extractImageLabelsByPublicUri(self, uri):
         try:
@@ -38,7 +40,7 @@ class ImageUploadManager():
             
             return list(map(lambda x: x['description'], response))          
         except BaseException as e:
-            print('Error:' + str(e))
+            self.logger.log_error('<ImageUploadManager.extractImageLabelsByPublicUri> => ' + str(e))
         
 # Usage example
 # ium = ImageUploadManager()
