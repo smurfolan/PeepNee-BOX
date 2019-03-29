@@ -6,12 +6,15 @@ import datetime
 import email.utils
 from enums import MailItemStatus
 
+from loggingManager import Logger
+
 class FirebaseManager():
     # Additional seconds are added because of the network latency.
     __NETWORK_LATENCY_COMPROMISE_SECONDS = 4
 
     def __init__(self):
         self.configuration = GlobalConfigurationWrapper()
+        self.logger = Logger()
         
         self.firebaseConfig = {
           "apiKey": self.configuration.fbase_apiKey(),
@@ -51,7 +54,7 @@ class FirebaseManager():
                 pass
             
             if self.referenceToNewlyAddedMailItem is not None:
-                print('[DEBUG] New item successfully created and stream was created')
+                self.logger.log_information('<FirebaseManager.__start_waiting_for_user_response> => New item successfully created and stream was created')
                 self.new_mail_item_update_stream = self.db.child("MailItems/" + self.referenceToNewlyAddedMailItem).stream(self.__new_mail_item_update_stream_handler)
                
             newMailItemStatus = self.__start_waiting_for_user_response()
@@ -61,13 +64,13 @@ class FirebaseManager():
                     "openByDefault": self.openByDefault
                     }
         except BaseException as e:
-            print('Error' + str(e))
+            self.logger.log_critical('<FirebaseManager.submit_mail_item> => ' + str(e))
     
     def toggle_mailbox_active_status(self, isActive):
         try:
             self.db.child("Mailboxes").child(self.boxId).update({"isActive": isActive})
         except BaseException as e:
-            print('Error' + str(e))
+            self.logger.log_critical('<FirebaseManager.toggle_mailbox_active_status> => ' + str(e))
             
     def __new_mail_item_update_stream_handler(self, message):
         if message["data"] is not None and message["data"]["status"] is not None:
@@ -85,7 +88,7 @@ class FirebaseManager():
                 self.db.child("MailItems").child(self.referenceToNewlyAddedMailItem).update({ "status": MailItemStatus.Declined })     
         
         if self.new_mail_item_update_stream is not None:
-            print('[DEBUG]: Closing update stream..')
+            self.logger.log_information('<FirebaseManager.__start_waiting_for_user_response> => Closing update stream..')
             self.new_mail_item_update_stream.close()
             
         return self.NewlyAddedMailItemStatus
@@ -98,7 +101,7 @@ class FirebaseManager():
                 self.timeToWaitBeforeOpenOrClose = mailbox.val().get('timeToWaitBeforeOpenOrClose')
             
         except BaseException as e:
-            print('Error' + str(e))
+            self.logger.log_error('<FirebaseManager.__load_default_settings_from_firebase> => ' + str(e))
     
     def __load_local_default_settings(self):
         self.boxId = self.configuration.box_id()

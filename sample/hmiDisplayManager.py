@@ -10,6 +10,7 @@ from enums import HmiDisplayPageEnum
 
 from userInputHandler import UserInputHandler
 from boxOpeningManager import BoxOpeningManager
+from loggingManager import Logger
 
 class HmiDisplayManager():
     __metaclass__ = Singleton
@@ -23,46 +24,56 @@ class HmiDisplayManager():
         self.configuration = GlobalConfigurationWrapper()
         self.hmiConfiguration = HmiConfigurationWrapper()
         self.boxOpeningManager = BoxOpeningManager()
+        self.logger = Logger()
         
         self.serial = serial.Serial(port='/dev/serial0',baudrate=9600,timeout=1.0)
         self.worker_thread = threading.Thread(target=self.__idle_start, args=())
         
     def idle(self):
-        self.show_page(HmiDisplayPageEnum.Home)
+        try:
+            self.show_page(HmiDisplayPageEnum.Home)
         
-        if not self.serial.isOpen():
-            self.serial.open()
+            if not self.serial.isOpen():
+                self.serial.open()
               
-        if not self.worker_thread.isAlive():
-            self.worker_thread.start()
+            if not self.worker_thread.isAlive():
+                self.worker_thread.start()
+        except BaseException as e:
+            self.logger.log_critical('<HmiDisplayManager.idle> => ' + str(e))
         
     def sleep(self):
-        if hasattr(self, 'worker_thread'):
-            self.worker_thread.do_run = False      
+        try:
+            if hasattr(self, 'worker_thread'):
+                self.worker_thread.do_run = False
+        except BaseException as e:
+            self.logger.log_critical('<HmiDisplayManager.sleep> => ' + str(e))
     
     def show_page(self, pageId):
-        switcher = {
-            HmiDisplayPageEnum.Home:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.home_page_id())),
-            HmiDisplayPageEnum.GoOnMarkerAndPushAgain:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.show_package_page_id())),
-            HmiDisplayPageEnum.TakingPictureOfYou:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.taking_picture_page_id())),
-            HmiDisplayPageEnum.WaitingForAnswer:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.wait_page_id())),
-            HmiDisplayPageEnum.PackageDeclined:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.packageDeclinedPageId())),
-            HmiDisplayPageEnum.PackageAccepted:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.package_accepted_page_id())),
-            HmiDisplayPageEnum.RepeatTheSteps:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.repeat_steps_page_id())),
-            HmiDisplayPageEnum.ThankYou:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.thank_you_page_id())),
-            HmiDisplayPageEnum.PictureWasTaken:
-                lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.picture_was_taken_page_id()))
-        }
-        f = switcher.get(pageId, lambda: "Invalid page id")
-        f()
+        try:
+            switcher = {
+                HmiDisplayPageEnum.Home:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.home_page_id())),
+                HmiDisplayPageEnum.GoOnMarkerAndPushAgain:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.show_package_page_id())),
+                HmiDisplayPageEnum.TakingPictureOfYou:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.taking_picture_page_id())),
+                HmiDisplayPageEnum.WaitingForAnswer:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.wait_page_id())),
+                HmiDisplayPageEnum.PackageDeclined:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.packageDeclinedPageId())),
+                HmiDisplayPageEnum.PackageAccepted:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.package_accepted_page_id())),
+                HmiDisplayPageEnum.RepeatTheSteps:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.repeat_steps_page_id())),
+                HmiDisplayPageEnum.ThankYou:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.thank_you_page_id())),
+                HmiDisplayPageEnum.PictureWasTaken:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.picture_was_taken_page_id()))
+            }
+            f = switcher.get(pageId, lambda: "Invalid page id")
+            f()
+        except BaseException as e:
+            self.logger.log_critical('<HmiDisplayManager.show_page> => ' + str(e))
             
     # Private methods
     def __send_command(self, command):

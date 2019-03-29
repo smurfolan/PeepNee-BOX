@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 
 from patternImplementations import Singleton
+from loggingManager import Logger
 
 class ServoManager():
     __metaclass__ = Singleton
@@ -14,12 +15,20 @@ class ServoManager():
         
         self.pwm=GPIO.PWM(self.__OUTPUT_GPIO_PIN_NUMBER,50)
         self.pwm.start(0)
+        
+        self.logger = Logger()
     
     def openMailbox(self):
-        self.__set_angle(13)
+        try:
+            self.__set_angle(13)
+        except BaseException as e:
+            self.logger.log_critical('<ServoManager.openMailbox> => ' + str(e))
     
     def closeMailbox(self):
-        self.__set_angle(185)
+        try:
+            self.__set_angle(185)
+        except BaseException as e:
+            self.logger.log_critical('<ServoManager.closeMailbox> => ' + str(e))
     
     def __set_angle(self, angle):
         duty = (angle/18 + 2)
