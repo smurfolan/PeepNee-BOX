@@ -6,6 +6,7 @@ import threading
 
 from patternImplementations import Singleton
 from firebaseManager import FirebaseManager
+from loggingManager import Logger
 
 class UpsManager():
     __metaclass__ = Singleton
@@ -21,6 +22,7 @@ class UpsManager():
         self._lastTimeLowBatteryDetected = None
         
         self.worker_thread = threading.Thread(target=self.__periodicallyCheckBatteryLevel, args=())
+        self.logger = Logger()
      
     def idle(self):
         try:
@@ -28,6 +30,7 @@ class UpsManager():
                 self.worker_thread.start()
         except BaseException as e:
             self.logger.log_critical('<UpsManager.idle> => ' + str(e))
+            raise
     
     def sleep(self):
         try:

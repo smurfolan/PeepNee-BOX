@@ -23,7 +23,11 @@ class TurnOffRequestHandler():
         self.turnOffWasRequested = False
         
     def idle(self):
-        self.turn_off_request_stream = self.db.child("Mailboxes/" + self.configuration.box_id()).stream(self.__turn_off_request_stream_handler)
+        try:
+            self.turn_off_request_stream = self.db.child("Mailboxes/" + self.configuration.box_id()).stream(self.__turn_off_request_stream_handler)
+        except BaseException as e:
+            self.logger.log_critical('<TurnOffRequestHandler.idle> => ' + str(e))
+            raise
     
     def turnOffIsRequested(self):
         return self.turnOffWasRequested

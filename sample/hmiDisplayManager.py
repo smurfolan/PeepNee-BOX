@@ -40,6 +40,7 @@ class HmiDisplayManager():
                 self.worker_thread.start()
         except BaseException as e:
             self.logger.log_critical('<HmiDisplayManager.idle> => ' + str(e))
+            raise
         
     def sleep(self):
         try:

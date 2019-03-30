@@ -71,6 +71,7 @@ class FirebaseManager():
             self.db.child("Mailboxes").child(self.boxId).update({"isActive": isActive})
         except BaseException as e:
             self.logger.log_critical('<FirebaseManager.toggle_mailbox_active_status> => ' + str(e))
+            raise
             
     def __new_mail_item_update_stream_handler(self, message):
         if message["data"] is not None and message["data"]["status"] is not None:
