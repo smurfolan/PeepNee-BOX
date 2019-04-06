@@ -1,7 +1,8 @@
 from enums import MailItemStatus
-from enums import HmiDisplayPageEnum
+from enums import HmiDisplayPageEnum, SoundEnum
 
 from boxOpeningManager import BoxOpeningManager
+from soundManager import SoundManager
 
 class UserResponseHandler():
 
@@ -11,6 +12,7 @@ class UserResponseHandler():
             self.openByDefault = openByDefault
             
             self.boxOpeningManager = BoxOpeningManager()
+            self.soundManager = SoundManager()
         
             self.__execute();
     
@@ -24,13 +26,16 @@ class UserResponseHandler():
                     self.hmiDisplayManager.show_page(HmiDisplayPageEnum.PackageDeclined)   
         
             if self.mailItemStatus == MailItemStatus.Accepted:
+                self.soundManager.playSound(SoundEnum.PackageAccepted)
                 self.hmiDisplayManager.show_page(HmiDisplayPageEnum.PackageAccepted)
                 self.boxOpeningManager.start_box_opening_procedure()
         
             if self.mailItemStatus == MailItemStatus.Declined:
+                self.soundManager.playSound(SoundEnum.PackageDeclined)
                 self.hmiDisplayManager.show_page(HmiDisplayPageEnum.PackageDeclined)
 
             if self.mailItemStatus == MailItemStatus.Repeat:
+                self.soundManager.playSound(SoundEnum.OwnerRequestedRepeat)
                 self.hmiDisplayManager.show_page(HmiDisplayPageEnum.RepeatTheSteps)
                 
         except Exception as e:
