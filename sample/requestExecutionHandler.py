@@ -1,7 +1,7 @@
 from firebaseManager import FirebaseManager
 from imageUploadManager import ImageUploadManager
 from userResponseHandler import UserResponseHandler
-from enums import HmiDisplayPageEnum
+from enums import HmiDisplayPageEnum, SoundEnum
 from soundManager import SoundManager
 
 class RequestExecutionHandler():

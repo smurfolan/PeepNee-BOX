@@ -6,11 +6,12 @@ import threading
 
 from patternImplementations import Singleton
 from configurationWrapping import GlobalConfigurationWrapper, HmiConfigurationWrapper
-from enums import HmiDisplayPageEnum
+from enums import HmiDisplayPageEnum, SoundEnum
 
 from userInputHandler import UserInputHandler
 from boxOpeningManager import BoxOpeningManager
 from loggingManager import Logger
+from soundManager import SoundManager
 
 class HmiDisplayManager():
     __metaclass__ = Singleton
@@ -25,6 +26,7 @@ class HmiDisplayManager():
         self.hmiConfiguration = HmiConfigurationWrapper()
         self.boxOpeningManager = BoxOpeningManager()
         self.logger = Logger()
+        self.soundManager = SoundManager()
         
         self.serial = serial.Serial(port='/dev/serial0',baudrate=9600,timeout=1.0)
         self.worker_thread = threading.Thread(target=self.__idle_start, args=())
@@ -92,7 +94,10 @@ class HmiDisplayManager():
             if(sys.getsizeof(rcv)>=self._EXPECTED_MIN_SIZE_OF_RECEIVED_PAYLOAD_):
                 pageId, btnId, _, _, _, _ = struct.unpack(self._DAT_FMT_, rcv)
 
-                # TODO: Add discrete mechanism for going through the pages
+                if(pageId == self.hmiConfiguration.home_page_id()):
+                    if(btnId == self.hmiConfiguration.home_screen_main_button_index()):
+                        self.soundManager.playSound(SoundEnum.ClickOnCapture)
+                    
                 if(pageId == self.hmiConfiguration.show_package_page_id()):
                     if(btnId == self.hmiConfiguration.show_packge_and_click_button_index()):
                         try:
