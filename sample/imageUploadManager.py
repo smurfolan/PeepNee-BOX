@@ -41,6 +41,7 @@ class ImageUploadManager():
             return list(map(lambda x: x['description'], response))          
         except BaseException as e:
             self.logger.log_error('<ImageUploadManager.extractImageLabelsByPublicUri> => ' + str(e))
+            raise
         
 # Usage example
 # ium = ImageUploadManager()

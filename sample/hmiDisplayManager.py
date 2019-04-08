@@ -101,6 +101,7 @@ class HmiDisplayManager():
                 if(pageId == self.hmiConfiguration.show_package_page_id()):
                     if(btnId == self.hmiConfiguration.show_packge_and_click_button_index()):
                         try:
+                            self.soundManager.stopSound()
                             UserInputHandler(self)
                         except Exception as e:
                             #send_somewhere(traceback.format_exception(*sys.exc_info()))                         

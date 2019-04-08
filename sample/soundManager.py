@@ -14,6 +14,9 @@ class SoundManager():
         self.__loadSound(soundId)
         self.__playLoadedSound()
     
+    def stopSound(self):
+        self.__stopSound()
+    
     def __loadSound(self, soundId):
         try:
             switcher = {
