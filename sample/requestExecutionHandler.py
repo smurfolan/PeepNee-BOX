@@ -1,12 +1,14 @@
 from firebaseManager import FirebaseManager
 from imageUploadManager import ImageUploadManager
 from userResponseHandler import UserResponseHandler
-from enums import HmiDisplayPageEnum
+from enums import HmiDisplayPageEnum, SoundEnum
+from soundManager import SoundManager
 
 class RequestExecutionHandler():
 
     def __init__(self, hmiDisplayManager, imageUrl, ocrParsedText):
             self.hmiDisplayManager = hmiDisplayManager
+            self.soundManager = SoundManager()
             
             self.imageUrl = imageUrl
             self.ocrParsedText = ocrParsedText
@@ -15,6 +17,8 @@ class RequestExecutionHandler():
     
     def __execute(self):
         try:
+            self.soundManager.playSound(SoundEnum.WaitToContactOwner)
+            
             fbManager = FirebaseManager()
             imageUploadManager = ImageUploadManager()
             self.hmiDisplayManager.show_page(HmiDisplayPageEnum.WaitingForAnswer)

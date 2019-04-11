@@ -20,6 +20,15 @@ class HmiDisplayPageEnum:
     ThankYou = 7
     PictureWasTaken = 8
     
+class SoundEnum:
+    Hello = 0
+    ClickOnCapture = 1
+    WaitToContactOwner = 2
+    PackageAccepted = 3   
+    PackageDeclined = 4
+    OwnerRequestedRepeat = 5
+    ThankYou = 6
+    
 class MailItemStatus(IntEnum):
     Pending = 2
     Accepted = 1

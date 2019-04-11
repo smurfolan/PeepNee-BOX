@@ -65,6 +65,7 @@ class FirebaseManager():
                     }
         except BaseException as e:
             self.logger.log_critical('<FirebaseManager.submit_mail_item> => ' + str(e))
+            raise
     
     def toggle_mailbox_active_status(self, isActive):
         try:
@@ -103,6 +104,7 @@ class FirebaseManager():
             
         except BaseException as e:
             self.logger.log_error('<FirebaseManager.__load_default_settings_from_firebase> => ' + str(e))
+            raise
     
     def __load_local_default_settings(self):
         self.boxId = self.configuration.box_id()
