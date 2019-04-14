@@ -6,6 +6,8 @@ from upsManager import UpsManager
 from turnOffRequestHandler import TurnOffRequestHandler
 from firebaseManager import FirebaseManager
 
+from tagsManager import TagsManager
+
 try:
     hmiDisplayManager=HmiDisplayManager()
     upsManager=UpsManager()
@@ -18,10 +20,16 @@ try:
     fbManager = FirebaseManager()
     fbManager.toggle_mailbox_active_status(True)
     
+    tagsManager = TagsManager()
+    
     while True:
         if turnOffRequestHandler.turnOffIsRequested():
             # TODO: Using the hmiDisplayManager show an 'OFFLINE' screen to indicate box is in a shut-down state.
             break;
+        
+        if not tagsManager.isProcessingTag():
+            tagsManager.readTags()
+            
         time.sleep(1)
         
 except BaseException as e:

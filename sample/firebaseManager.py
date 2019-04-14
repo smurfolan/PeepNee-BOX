@@ -73,7 +73,14 @@ class FirebaseManager():
         except BaseException as e:
             self.logger.log_critical('<FirebaseManager.toggle_mailbox_active_status> => ' + str(e))
             raise
-            
+    
+    def get_tag_info_by_tag_id(self, tagId):
+        try:
+            return self.db.child("Tags/" + tagId).get()
+        except BaseException as e:
+            self.logger.log_error('<FirebaseManager.get_tag_info_by_tag_id> => ' + str(e))
+            raise
+    
     def __new_mail_item_update_stream_handler(self, message):
         if message["data"] is not None and message["data"]["status"] is not None:
             self.NewlyAddedMailItemStatus = int(message["data"]["status"])
