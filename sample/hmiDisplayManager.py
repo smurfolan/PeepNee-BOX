@@ -12,6 +12,7 @@ from userInputHandler import UserInputHandler
 from boxOpeningManager import BoxOpeningManager
 from loggingManager import Logger
 from soundManager import SoundManager
+from tagsManager import TagsManager
 
 class HmiDisplayManager():
     __metaclass__ = Singleton
@@ -27,6 +28,7 @@ class HmiDisplayManager():
         self.boxOpeningManager = BoxOpeningManager()
         self.logger = Logger()
         self.soundManager = SoundManager()
+        self.tagsManager = TagsManager()
         
         self.serial = serial.Serial(port='/dev/serial0',baudrate=9600,timeout=1.0)
         self.worker_thread = threading.Thread(target=self.__idle_start, args=())
@@ -71,7 +73,9 @@ class HmiDisplayManager():
                 HmiDisplayPageEnum.ThankYou:
                     lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.thank_you_page_id())),
                 HmiDisplayPageEnum.PictureWasTaken:
-                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.picture_was_taken_page_id()))
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.picture_was_taken_page_id())),
+                HmiDisplayPageEnum.KeypadInput:
+                    lambda: self.__send_command(self.__formatted_page_command(self.hmiConfiguration.keypad_input_page_id()))
             }
             f = switcher.get(pageId, lambda: "Invalid page id")
             f()
@@ -107,14 +111,45 @@ class HmiDisplayManager():
                             #send_somewhere(traceback.format_exception(*sys.exc_info()))                         
                             self.show_page(HmiDisplayPageEnum.PackageAccepted)
                             self.boxOpeningManager.start_box_opening_procedure()
+                            
+                if(pageId == self.hmiConfiguration.keypad_input_page_id()):
+                    self.__secretCodeInputHandler(btnId)
+                    
             time.sleep(2)
         
         if self.serial.isOpen():
             self.serial.close()
+            
+    def __secretCodeInputHandler(self, btnId):
+        if(btnId == self.hmiConfiguration.keypad_view_one_btn_index()):
+            self.tagsManager.appendToSecretCode('1')
+        if(btnId == self.hmiConfiguration.keypad_view_two_btn_index()):
+            self.tagsManager.appendToSecretCode('2')
+        if(btnId == self.hmiConfiguration.keypad_view_three_btn_index()):
+            self.tagsManager.appendToSecretCode('3')
+        if(btnId == self.hmiConfiguration.keypad_view_four_btn_index()):
+            self.tagsManager.appendToSecretCode('4')
+        if(btnId == self.hmiConfiguration.keypad_view_five_btn_index()):
+            self.tagsManager.appendToSecretCode('5')
+        if(btnId == self.hmiConfiguration.keypad_view_six_btn_index()):
+            self.tagsManager.appendToSecretCode('6')
+        if(btnId == self.hmiConfiguration.keypad_view_seven_btn_index()):
+            self.tagsManager.appendToSecretCode('7')
+        if(btnId == self.hmiConfiguration.keypad_view_eight_btn_index()):
+            self.tagsManager.appendToSecretCode('8')
+        if(btnId == self.hmiConfiguration.keypad_view_nine_btn_index()):
+            self.tagsManager.appendToSecretCode('9')
+        if(btnId == self.hmiConfiguration.keypad_view_zero_btn_index()):
+            self.tagsManager.appendToSecretCode('0')
+            
+        if(btnId == self.hmiConfiguration.keypad_view_clear_btn_index()):
+            self.tagsManager.clearInput()
+        if(btnId == self.hmiConfiguration.keypad_view_send_btn_index()):
+            self.tagsManager.validateSecretCode()
+           
 
 # Usage example
-# hmi = HmiDisplayManager()
-# hmi.show_page(HmiDisplayPageEnum.Home)
+#hmi = HmiDisplayManager()
 # hmi.idle()
 # print('Hmi display is now in idle state.')
 # time.sleep(40)

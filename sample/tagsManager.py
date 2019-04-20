@@ -5,6 +5,7 @@ import time
 from patternImplementations import Singleton
 from loggingManager import Logger
 from firebaseManager import FirebaseManager
+from enums import HmiDisplayPageEnum
 
 class TagsManager():
     __metaclass__ = Singleton
@@ -17,8 +18,9 @@ class TagsManager():
         self.MIFAREReader = MFRC522.MFRC522()
         
         self.tagWasDetected=False
+        self.secretCode=''
 
-    def readTags(self):
+    def readTags(self, hmiDisplayManager):        
         # Scan for cards    
         (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)    
         # Get the UID of the card
@@ -30,10 +32,19 @@ class TagsManager():
             if tagId:
                 self.tagWasDetected = True
                 self.__getTagInfoByTagId(tagId)
-                print("Card detected:" + str(uid[0]) + str(uid[1]) + str(uid[2]) + str(uid[3]))
+                hmiDisplayManager.show_page(HmiDisplayPageEnum.KeypadInput)
     
     def isProcessingTag(self):
         return self.tagWasDetected
+    
+    def appendToSecretCode(self, digit):
+        self.secretCode+=str(digit)
+    
+    def clearInput(self):
+        self.secretCode=''
+    
+    def validateSecretCode(self):
+        pass
     
     def __getTagInfoByTagId(self, tagId):
         try:

@@ -113,9 +113,36 @@ class HmiConfigurationWrapper:
     def picture_was_taken_page_id(self):
         return (int)(self.config[self._PAGES_SECTION_]['pictureWasTakenPageId'])
     
+    def keypad_input_page_id(self):
+        return (int)(self.config[self._PAGES_SECTION_]['keypadViewPageId'])
+    
     # Buttons
     def home_screen_main_button_index(self):
         return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['homeScreenMainButton'])
     def show_packge_and_click_button_index(self):
         return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['showPackgeAndClickButton'])
+    def keypad_view_one_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewOneBtn'])
+    def keypad_view_two_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewTwoBtn'])
+    def keypad_view_three_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewThreeBtn'])
+    def keypad_view_four_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewFourBtn'])
+    def keypad_view_five_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewFiveBtn'])
+    def keypad_view_six_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewSixBtn'])
+    def keypad_view_seven_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewSevenBtn'])
+    def keypad_view_eight_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewEightBtn'])
+    def keypad_view_nine_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewNineBtn'])
+    def keypad_view_zero_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewZeroBtn'])
+    def keypad_view_clear_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewClearBtn'])
+    def keypad_view_send_btn_index(self):
+        return (int)(self.config[self._BUTTON_PAGE_INDEXES_SECTION_]['keypadViewSendBtn'])
         

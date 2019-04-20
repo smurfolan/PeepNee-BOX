@@ -28,7 +28,7 @@ try:
             break;
         
         if not tagsManager.isProcessingTag():
-            tagsManager.readTags()
+            tagsManager.readTags(hmiDisplayManager)
             
         time.sleep(1)
         

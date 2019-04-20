@@ -19,6 +19,7 @@ class HmiDisplayPageEnum:
     RepeatTheSteps = 6
     ThankYou = 7
     PictureWasTaken = 8
+    KeypadInput = 9
     
 class SoundEnum:
     Hello = 0
