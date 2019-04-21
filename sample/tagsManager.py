@@ -9,6 +9,7 @@ from enums import HmiDisplayPageEnum
 
 class TagsManager():
     __metaclass__ = Singleton
+    __TIMEOUT_PERIOD_IN_SECONDS = 12
     
     def __init__(self):
         self.logger = Logger()
@@ -17,10 +18,12 @@ class TagsManager():
         signal.signal(signal.SIGINT, self.__end_read)
         self.MIFAREReader = MFRC522.MFRC522()
         
-        self.tagWasDetected=False
-        self.secretCode=''
+        self.tagIsBeingProcessed=False
+        self.secretCodeEntered=''
+        self.lastDetectionDateTime=0
 
-    def readTags(self, hmiDisplayManager):        
+    def readTags(self, hmiDisplayManager):
+        self.hmiDisplayManager = hmiDisplayManager
         # Scan for cards    
         (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)    
         # Get the UID of the card
@@ -30,28 +33,39 @@ class TagsManager():
         if status == self.MIFAREReader.MI_OK:
             tagId = str(uid[0]) + str(uid[1]) + str(uid[2]) + str(uid[3])
             if tagId:
-                self.tagWasDetected = True
+                self.lastDetectionDateTime = int(time.time())
+                self.tagIsBeingProcessed = True
                 self.__getTagInfoByTagId(tagId)
-                hmiDisplayManager.show_page(HmiDisplayPageEnum.KeypadInput)
-    
+                self.hmiDisplayManager.show_page(HmiDisplayPageEnum.KeypadInput)
+        
     def isProcessingTag(self):
-        return self.tagWasDetected
+        timeout = int(time.time())-self.lastDetectionDateTime >= self.__TIMEOUT_PERIOD_IN_SECONDS
+        if(timeout):
+            self.tagIsBeingProcessed=False
+
+        return self.tagIsBeingProcessed
     
     def appendToSecretCode(self, digit):
-        self.secretCode+=str(digit)
+        self.secretCodeEntered+=str(digit)
     
     def clearInput(self):
-        self.secretCode=''
+        self.secretCodeEntered=''
     
     def validateSecretCode(self):
-        pass
+        if(self.tagSecretCode == self.secretCodeEntered):
+            print('Secret code is valid')
+        else:
+            print('Secret code is not valid')
+        
+        self.hmiDisplayManager.show_page(HmiDisplayPageEnum.Home)
+        self.clearInput()
+        self.tagIsBeingProcessed = False
     
     def __getTagInfoByTagId(self, tagId):
         try:
             tag = self.firebaseManager.get_tag_info_by_tag_id(tagId)
             if tag.val() is not None:
-                self.tagSecretCode = tag.val().get('secretCode')
-                #Use hmi display manager to show keypad page
+                self.tagSecretCode = str(tag.val().get('secretCode'))
             
         except BaseException as e:
             self.logger.log_error('<TagsManager.__getTagInfoByTagId> => ' + str(e))

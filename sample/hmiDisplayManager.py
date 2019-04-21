@@ -12,7 +12,6 @@ from userInputHandler import UserInputHandler
 from boxOpeningManager import BoxOpeningManager
 from loggingManager import Logger
 from soundManager import SoundManager
-from tagsManager import TagsManager
 
 class HmiDisplayManager():
     __metaclass__ = Singleton
@@ -22,13 +21,13 @@ class HmiDisplayManager():
     _NUMBER_OF_BYTES_TO_READ_ = 7
     _EXPECTED_MIN_SIZE_OF_RECEIVED_PAYLOAD_ = 24
     
-    def __init__(self):
+    def __init__(self, tagsManager):
         self.configuration = GlobalConfigurationWrapper()
         self.hmiConfiguration = HmiConfigurationWrapper()
         self.boxOpeningManager = BoxOpeningManager()
         self.logger = Logger()
         self.soundManager = SoundManager()
-        self.tagsManager = TagsManager()
+        self.tagsManager = tagsManager
         
         self.serial = serial.Serial(port='/dev/serial0',baudrate=9600,timeout=1.0)
         self.worker_thread = threading.Thread(target=self.__idle_start, args=())

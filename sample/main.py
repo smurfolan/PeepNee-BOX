@@ -9,7 +9,9 @@ from firebaseManager import FirebaseManager
 from tagsManager import TagsManager
 
 try:
-    hmiDisplayManager=HmiDisplayManager()
+    tagsManager = TagsManager()
+    #tagsManager and hmiDisplayManager live on separate threads and that's why we can not take advantage of a singleton and we pass a reference.
+    hmiDisplayManager=HmiDisplayManager(tagsManager)
     upsManager=UpsManager()
     turnOffRequestHandler=TurnOffRequestHandler()
     
@@ -19,8 +21,6 @@ try:
     
     fbManager = FirebaseManager()
     fbManager.toggle_mailbox_active_status(True)
-    
-    tagsManager = TagsManager()
     
     while True:
         if turnOffRequestHandler.turnOffIsRequested():
