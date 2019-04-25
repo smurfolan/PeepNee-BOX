@@ -29,7 +29,7 @@ class FirebaseManager():
         self.__load_local_default_settings()
         self.__load_default_settings_from_firebase()
         
-    def submit_mail_item(self, ocrText, snapshotUrl, associatedImageTags):
+    def submit_anonymous_mail_item(self, ocrText, snapshotUrl, associatedImageTags):
         try:
             mailReceivedAt = datetime.datetime.now(datetime.timezone.utc)
             waitForUserResponseUntil = email.utils.format_datetime(mailReceivedAt + datetime.timedelta(seconds=int(self.timeToWaitBeforeOpenOrClose) + self.__NETWORK_LATENCY_COMPROMISE_SECONDS))
@@ -43,7 +43,8 @@ class FirebaseManager():
                 "waitForResponseUntil": waitForUserResponseUntil,
                 "topScoreImageTag": associatedImageTags[0] if numberOfImageTags > 0 else "",
                 "middleScoreImageTag": associatedImageTags[1] if numberOfImageTags > 1 else "",
-                "lowestScoreImageTag": associatedImageTags[2] if numberOfImageTags > 2 else ""
+                "lowestScoreImageTag": associatedImageTags[2] if numberOfImageTags > 2 else "",
+                "isAnonymous": True
             }
             
             try:
@@ -64,8 +65,24 @@ class FirebaseManager():
                     "openByDefault": self.openByDefault
                     }
         except BaseException as e:
-            self.logger.log_critical('<FirebaseManager.submit_mail_item> => ' + str(e))
+            self.logger.log_critical('<FirebaseManager.submit_anonymous_mail_item> => ' + str(e))
             raise
+    
+    def submit_trusted_mail_item(self, tagOwnerName, tagOwnerContact, tagCompany):
+        try:
+            mailReceivedAt = datetime.datetime.now(datetime.timezone.utc)
+            data = {
+                "mailboxId": (int)(self.boxId),
+                "receivedAt": email.utils.format_datetime(mailReceivedAt),
+                "rfidCompany": tagCompany,
+                "rfidTagOwner": tagOwnerName,
+                "rfidTagOwnerContact": tagOwnerContact,
+                "isAnonymous": False
+            }
+            self.db.child("MailItems").push(data)         
+        except BaseException as e:
+            self.logger.log_critical('<FirebaseManager.submit_trusted_mail_item> => ' + str(e))
+            raise 
     
     def toggle_mailbox_active_status(self, isActive):
         try:

@@ -6,6 +6,8 @@ from patternImplementations import Singleton
 from loggingManager import Logger
 from firebaseManager import FirebaseManager
 from enums import HmiDisplayPageEnum
+from boxOpeningManager import BoxOpeningManager
+
 
 class TagsManager():
     __metaclass__ = Singleton
@@ -14,6 +16,7 @@ class TagsManager():
     def __init__(self):
         self.logger = Logger()
         self.firebaseManager = FirebaseManager()
+        self.boxOpeningManager = BoxOpeningManager()
         
         signal.signal(signal.SIGINT, self.__end_read)
         self.MIFAREReader = MFRC522.MFRC522()
@@ -53,19 +56,25 @@ class TagsManager():
     
     def validateSecretCode(self):
         if(self.tagSecretCode == self.secretCodeEntered):
-            print('Secret code is valid')
+            self.firebaseManager.submit_trusted_mail_item(self.tagOwnerName, self.tagOwnerContact, self.tagCompany)
+            self.hmiDisplayManager.show_page(HmiDisplayPageEnum.PackageAccepted)
+            self.boxOpeningManager.start_box_opening_procedure()
         else:
-            print('Secret code is not valid')
-        
-        self.hmiDisplayManager.show_page(HmiDisplayPageEnum.Home)
+            self.hmiDisplayManager.show_page(HmiDisplayPageEnum.PackageDeclined)
+
         self.clearInput()
         self.tagIsBeingProcessed = False
+        time.sleep(3)
+        self.hmiDisplayManager.show_page(HmiDisplayPageEnum.Home)
     
     def __getTagInfoByTagId(self, tagId):
         try:
             tag = self.firebaseManager.get_tag_info_by_tag_id(tagId)
             if tag.val() is not None:
                 self.tagSecretCode = str(tag.val().get('secretCode'))
+                self.tagOwnerName = str(tag.val().get('owner'))
+                self.tagOwnerContact = str(tag.val().get('ownerContact'))
+                self.tagCompany = str(tag.val().get('company'))
             
         except BaseException as e:
             self.logger.log_error('<TagsManager.__getTagInfoByTagId> => ' + str(e))

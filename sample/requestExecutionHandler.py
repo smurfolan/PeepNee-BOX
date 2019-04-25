@@ -23,7 +23,7 @@ class RequestExecutionHandler():
             imageUploadManager = ImageUploadManager()
             self.hmiDisplayManager.show_page(HmiDisplayPageEnum.WaitingForAnswer)
             imageTags = imageUploadManager.extractImageLabelsByPublicUri(self.imageUrl)
-            newMailResponse = fbManager.submit_mail_item(self.ocrParsedText, self.imageUrl, imageTags)
+            newMailResponse = fbManager.submit_anonymous_mail_item(self.ocrParsedText, self.imageUrl, imageTags)
             
             UserResponseHandler(
                 self.hmiDisplayManager,
