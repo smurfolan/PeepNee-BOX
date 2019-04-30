@@ -12,7 +12,6 @@ class UserResponseHandler():
             self.hmiDisplayManager = hmiDisplayManager
             self.mailItemStatus = mailItemStatus
             self.openByDefault = openByDefault
-            
             self.boxOpeningManager = BoxOpeningManager()
             self.soundManager = SoundManager()
         
@@ -36,7 +35,8 @@ class UserResponseHandler():
                     self.hmiDisplayManager.show_page(HmiDisplayPageEnum.PackageDeclined)
                     time.sleep(6)
         
-                self.__finish_the_flow()               
+                self.__finish_the_flow()
+            del self.boxOpeningManager
         except Exception as e:
             raise
         

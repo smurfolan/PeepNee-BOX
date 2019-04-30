@@ -16,8 +16,7 @@ class TagsManager():
     def __init__(self):
         self.logger = Logger()
         self.firebaseManager = FirebaseManager()
-        self.boxOpeningManager = BoxOpeningManager()
-        
+
         signal.signal(signal.SIGINT, self.__end_read)
         self.MIFAREReader = MFRC522.MFRC522()
         
@@ -26,6 +25,9 @@ class TagsManager():
         self.lastDetectionDateTime=0
 
     def readTags(self, hmiDisplayManager):
+        if hasattr(self, 'boxOpeningManager'):
+            del self.boxOpeningManager
+        
         self.hmiDisplayManager = hmiDisplayManager
         # Scan for cards    
         (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)    
@@ -40,7 +42,7 @@ class TagsManager():
                 self.tagIsBeingProcessed = True
                 self.__getTagInfoByTagId(tagId)
                 self.hmiDisplayManager.show_page(HmiDisplayPageEnum.KeypadInput)
-        
+
     def isProcessingTag(self):
         timeout = int(time.time())-self.lastDetectionDateTime >= self.__TIMEOUT_PERIOD_IN_SECONDS
         if(timeout):
@@ -55,6 +57,7 @@ class TagsManager():
         self.secretCodeEntered=''
     
     def validateSecretCode(self):
+        self.boxOpeningManager=BoxOpeningManager()
         if(self.tagSecretCode == self.secretCodeEntered):
             self.firebaseManager.submit_trusted_mail_item(self.tagOwnerName, self.tagOwnerContact, self.tagCompany)
             self.hmiDisplayManager.show_page(HmiDisplayPageEnum.PackageAccepted)
@@ -66,11 +69,12 @@ class TagsManager():
         self.tagIsBeingProcessed = False
         time.sleep(3)
         self.hmiDisplayManager.show_page(HmiDisplayPageEnum.Home)
-    
+        
     def __getTagInfoByTagId(self, tagId):
         try:
             tag = self.firebaseManager.get_tag_info_by_tag_id(tagId)
             if tag.val() is not None:
+                print('TAG INFO WAS FETCHED')
                 self.tagSecretCode = str(tag.val().get('secretCode'))
                 self.tagOwnerName = str(tag.val().get('owner'))
                 self.tagOwnerContact = str(tag.val().get('ownerContact'))
@@ -80,7 +84,7 @@ class TagsManager():
             self.logger.log_error('<TagsManager.__getTagInfoByTagId> => ' + str(e))
             raise
     
-    def __end_read(signal,frame):
+    def __end_read(self, signal,frame):
         print("Ctrl+C captured, ending read.")
         
 #tm=TagsManager()
