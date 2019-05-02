@@ -41,7 +41,6 @@ class TagsManager():
                 self.lastDetectionDateTime = int(time.time())
                 self.tagIsBeingProcessed = True
                 self.__getTagInfoByTagId(tagId)
-                self.hmiDisplayManager.show_page(HmiDisplayPageEnum.KeypadInput)
 
     def isProcessingTag(self):
         timeout = int(time.time())-self.lastDetectionDateTime >= self.__TIMEOUT_PERIOD_IN_SECONDS
@@ -74,7 +73,8 @@ class TagsManager():
         try:
             tag = self.firebaseManager.get_tag_info_by_tag_id(tagId)
             if tag.val() is not None:
-                print('TAG INFO WAS FETCHED')
+                self.hmiDisplayManager.show_page(HmiDisplayPageEnum.KeypadInput)
+                
                 self.tagSecretCode = str(tag.val().get('secretCode'))
                 self.tagOwnerName = str(tag.val().get('owner'))
                 self.tagOwnerContact = str(tag.val().get('ownerContact'))
