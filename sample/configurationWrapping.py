@@ -26,6 +26,8 @@ class GlobalConfigurationWrapper:
         return self.config[self._BOX_METADATA_SECTION_]['timeToWaitBeforeOpenOrClose']
     def box_time_to_keep_the_box_open(self):
         return self.config[self._BOX_METADATA_SECTION_]['timeToKeepTheBoxOpen']
+    def box_require_2fa_for_trusted_mail(self):
+        return self.config[self._BOX_METADATA_SECTION_]['requireTwoFactorAuthForTrustedDelivery']
     
     # SignalR
     def signalr_hub_name(self):
