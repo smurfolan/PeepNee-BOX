@@ -28,6 +28,8 @@ class GlobalConfigurationWrapper:
         return self.config[self._BOX_METADATA_SECTION_]['timeToKeepTheBoxOpen']
     def box_require_2fa_for_trusted_mail(self):
         return self.config[self._BOX_METADATA_SECTION_]['requireTwoFactorAuthForTrustedDelivery']
+    def box_speaker_volume_level(self):
+        return float(self.config[self._BOX_METADATA_SECTION_]['speakerVolumeLevel'])
     
     # SignalR
     def signalr_hub_name(self):

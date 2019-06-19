@@ -1,5 +1,6 @@
 import pygame
 
+from configurationWrapping import GlobalConfigurationWrapper
 from loggingManager import Logger
 from enums import SoundEnum
 
@@ -9,6 +10,7 @@ class SoundManager():
     def __init__(self):
         pygame.init()
         self.logger = Logger()
+        self.configuration = GlobalConfigurationWrapper()
         
     def playSound(self, soundId):
         self.__loadSound(soundId)
@@ -41,6 +43,7 @@ class SoundManager():
             self.logger.log_critical('<SoundManager.__loadSound> => ' + str(e))
     
     def __playLoadedSound(self):
+        pygame.mixer.music.set_volume(self.configuration.box_speaker_volume_level())
         pygame.mixer.music.play(0)
     
     def __stopSound(self):
