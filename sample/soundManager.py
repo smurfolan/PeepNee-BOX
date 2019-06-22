@@ -43,12 +43,18 @@ class SoundManager():
             self.logger.log_critical('<SoundManager.__loadSound> => ' + str(e))
     
     def __playLoadedSound(self):
-        pygame.mixer.music.set_volume(self.configuration.box_speaker_volume_level())
-        pygame.mixer.music.play(0)
+        try:
+            pygame.mixer.music.set_volume(self.configuration.box_speaker_volume_level())
+            pygame.mixer.music.play(0)
+        except BaseException as e:
+            self.logger.log_critical('<SoundManager.__playLoadedSound> => ' + str(e))
     
     def __stopSound(self):
-        pygame.mixer.music.stop()
+        try:
+            pygame.mixer.music.stop()
+        except BaseException as e:
+            self.logger.log_critical('<SoundManager.__stopSound> => ' + str(e))
         
 # Usage example
 # sm = SoundManager()
-# sm.playSound(SoundEnum.OwnerRequestedRepeat)
+# sm.playSound(SoundEnum.PackageAccepted)
